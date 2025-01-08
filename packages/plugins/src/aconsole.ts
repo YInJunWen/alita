@@ -1,13 +1,11 @@
-import { logger, Mustache, winPath } from '@umijs/utils';
-import { AlitaApi } from 'alita';
+import type { AlitaApi } from '@alita/types';
+import { Mustache, winPath } from '@umijs/utils';
+
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { withTmpPath } from './utils/withTmpPath';
 
 export default (api: AlitaApi) => {
-  api.onStart(() => {
-    logger.info('Using AConsole Plugin');
-  });
   const { userConfig } = api;
   const { aconsole = {} } = userConfig;
 
@@ -40,24 +38,32 @@ export default (api: AlitaApi) => {
     enableBy: api.EnableBy.config,
   });
 
+  // only dev or build running
+  if (!['dev', 'build', 'dev-config', 'preview', 'setup'].includes(api.name))
+    return;
+
   if (aconsole?.console) {
-    api.addHTMLStyles(() => {
+    api.addHTMLHeadScripts(() => {
       return [
         {
-          content: `.vc-switch { right: 0px; bottom: 1.2rem !important; }`,
+          src: 'https://unpkg.com/vconsole@latest/dist/vconsole.min.js',
+          async: true,
         },
       ];
     });
-    api.addEntryImports(() => {
+    api.addHTMLStyles(() => {
       return [
         {
-          source: join(__dirname, '..', 'compiled', 'vconsole'),
-          specifier: 'VConsole',
+          content: `.vc-switch { right: 0px; bottom: calc(env(safe-area-inset-bottom) + 1.2rem) !important; }`,
         },
       ];
     });
     api.addEntryCode(() => {
-      return [`const c = new VConsole(${JSON.stringify(aconsole.console)});`];
+      return [
+        `if(window.VConsole) new window.VConsole(${JSON.stringify(
+          aconsole.console,
+        )});`,
+      ];
     });
   }
 
@@ -87,7 +93,7 @@ export default (api: AlitaApi) => {
                 margin: true,
                 size: true,
                 padding: true,
-                bottom: '3.5rem',
+                bottom: 'calc(env(safe-area-inset-bottom) + 2.2rem)',
                 right: '0',
               },
               ...(api.userConfig.inspx || {}),

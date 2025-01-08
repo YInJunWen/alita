@@ -1,15 +1,18 @@
 {
-  "name": "boilerplate",
+  "name": "@examples/boilerplate",
   "private": true,
-  "version": "1.0.0",
   "scripts": {
-    "dev": "rm -rf .mfsu && alita dev",
+    "dev": "alita dev",
     "build": "alita build",
-    "plugin": "alita plugin list"
+    "plugin": "alita plugin list",
+    "test:e2e": "start-test dev :8888/__umi/api/status test:pw",
+    "test:pw": "playwright test",
+    "start": "npm run dev"
   },
   "dependencies": {
     "@alita/flow": "workspace:*",
-    "@alita/plugins": "workspace:*",
-    "alita": "workspace:*"
+    "ahooks": "^3.0.8",
+    "alita": "workspace:*",
+    "antd-mobile": "^5.10.0"
   }
 }

@@ -1,4 +1,5 @@
 // https://reactjs.org/docs/error-boundaries.html#gatsby-focus-wrapper
+// @ts-nocheck
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import * as React from 'react';
 
@@ -15,8 +16,8 @@ export const UNKNOWN_COMPONENT = 'unknown';
 
 export type FallbackRender = (errorData: {
   error: Error;
-  componentStack: string | null;
-  eventId: string | null;
+  componentStack: string | null | undefined;
+  eventId: string | null | undefined;
   resetError(): void;
 }) => React.ReactElement;
 
@@ -37,27 +38,27 @@ export type ErrorBoundaryProps = {
   /** Called if resetError() is called from the fallback render props function  */
   onReset?(
     error: Error | null,
-    componentStack: string | null,
-    eventId: string | null,
+    componentStack: string | null | undefined,
+    eventId: string | null | undefined,
   ): void;
   /** Called on componentWillUnmount() */
   onUnmount?(
     error: Error | null,
-    componentStack: string | null,
-    eventId: string | null,
+    componentStack: string | null | undefined,
+    eventId: string | null | undefined,
   ): void;
   /** Called before the error is captured by Sentry, allows for you to add tags or context using the scope */
   beforeCapture?(
     scope: any,
     error: Error | null,
-    componentStack: string | null,
+    componentStack: string | null | undefined,
   ): void;
 };
 
 type ErrorBoundaryState = {
   componentStack: React.ErrorInfo['componentStack'] | null;
   error: Error | null;
-  eventId: string | null;
+  eventId: string | null | undefined;
 };
 
 const INITIAL_STATE = {
@@ -134,6 +135,7 @@ class ErrorBoundary extends React.Component<
   };
 
   public render(): React.ReactNode {
+    // @ts-ignore
     const { fallback, children } = this.props;
     const { error, componentStack, eventId } = this.state;
 
@@ -179,7 +181,9 @@ function withErrorBoundary<P extends Record<string, any>>(
     WrappedComponent.displayName || WrappedComponent.name || UNKNOWN_COMPONENT;
 
   const Wrapped: React.FC<P> = (props: P) => (
+    // @ts-ignore
     <ErrorBoundary {...errorBoundaryOptions}>
+      {/* @ts-ignore */}
       <WrappedComponent {...props} />
     </ErrorBoundary>
   );
@@ -189,6 +193,7 @@ function withErrorBoundary<P extends Record<string, any>>(
 
   // Copy over static methods from Wrapped component to Profiler HOC
   // See: https://reactjs.org/docs/higher-order-components.html#static-methods-must-be-copied-over
+  // @ts-ignore
   hoistNonReactStatics(Wrapped, WrappedComponent);
   return Wrapped;
 }

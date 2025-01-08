@@ -1,14 +1,9 @@
-import { logger, resolve, winPath } from '@umijs/utils';
-import { AlitaApi } from 'alita';
+import type { AlitaApi } from '@alita/types';
+import { resolve, winPath } from '@umijs/utils';
+
 import { dirname } from 'path';
 
 export default (api: AlitaApi) => {
-  api.onStart(() => {
-    logger.info('Using Request Plugin');
-  });
-  const enableBy = (opts: any) => {
-    return !!opts.config.request;
-  };
   api.describe({
     key: 'request',
     config: {
@@ -16,17 +11,21 @@ export default (api: AlitaApi) => {
         return Joi.object();
       },
     },
-    enableBy,
   });
-  // 注册runtime配置
   api.addRuntimePluginKey(() => ['request']);
+
+  // only dev or build running
+  if (!['dev', 'build', 'dev-config', 'preview', 'setup'].includes(api.name))
+    return;
+
+  // 注册runtime配置
   api.addEntryCodeAhead(() => [
     `
-import { getPluginManager } from './core/plugin';
-  
-  import { setRequestConfig } from '${winPath(
-    dirname(require.resolve('@alita/request/package')),
-  )}';`,
+      import { getPluginManager } from './core/plugin';
+      import { setRequestConfig } from '${winPath(
+        dirname(require.resolve('@alita/request/package')),
+      )}';
+    `,
   ]);
   api.addEntryCode(() => [
     `setRequestConfig(getPluginManager().applyPlugins({ key: 'request',type: 'modify', initialValue: {} }))`,
@@ -37,13 +36,22 @@ import { getPluginManager } from './core/plugin';
     api.writeTmpFile({
       path: 'index.ts',
       content: `
-export { request } from '${winPath(
+        export { request } from '${winPath(
+          dirname(require.resolve('@alita/request/package')),
+        )}';
+        export { useRequest } from '${winPath(
+          dirname(require.resolve('ahooks/package')),
+        )}';
+      `,
+    });
+
+    // types.ts
+    api.writeTmpFile({
+      path: 'types.d.ts',
+      tpl: `export { ResponseError,Context,RequestConfig, RequestOptionsInit, RequestInterceptor, ResponseInterceptor } from '${winPath(
         dirname(require.resolve('@alita/request/package')),
-      )}';
-export { useRequest } from '${winPath(
-        dirname(require.resolve('ahooks/package')),
-      )}';
-`,
+      )}';`,
+      context: {},
     });
   });
   api.chainWebpack((memo) => {

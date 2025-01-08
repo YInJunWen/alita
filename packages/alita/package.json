@@ -1,16 +1,30 @@
 {
   "name": "alita",
-  "version": "3.0.0-beta.5",
-  "description": "v3 develop version",
+  "version": "3.5.6",
+  "description": "A React framework based on umi.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "assets",
+    "dist",
+    "templates",
+    "index.d.ts",
+    "index.esm.js",
+    "index.js",
+    "hackumi.js",
+    "dist",
+    "bin",
+    "prettier.js",
+    "test.d.ts",
+    "test.js",
+    "eslint.js",
+    "stylelint.js"
   ],
   "scripts": {
     "build": "pnpm tsc",
-    "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
-    "dev": "pnpm build -- --watch"
+    "build:deps": "umi-scripts bundleDeps",
+    "dev": "pnpm build --watch",
+    "test": "umi-scripts jest-turbo"
   },
   "repository": {
     "type": "git",
@@ -29,10 +43,16 @@
     "alita": "bin/alita.js"
   },
   "dependencies": {
-    "@alita/plugins": "workspace:*",
-    "@umijs/utils": "4.0.0-beta.16",
-    "@umijs/core": "4.0.0-beta.16",
-    "umi": "4.0.0-beta.16",
-    "v8-compile-cache": "^2.3.0"
+    "@alita/native": "3.4.3",
+    "@alita/plugin-azure": "3.2.3",
+    "@alita/plugins": "3.5.5",
+    "@alita/types": "3.1.2",
+    "@umijs/babel-preset-umi": "4.3.30",
+    "@umijs/bundler-webpack": "4.3.30",
+    "@umijs/core": "4.3.30",
+    "@umijs/preset-umi": "4.3.30",
+    "@umijs/utils": "4.3.30",
+    "open": "8.4.0",
+    "umi": "4.3.30"
   }
 }

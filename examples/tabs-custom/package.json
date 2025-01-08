@@ -1,0 +1,18 @@
+{
+  "name": "@examples/tabs-custom",
+  "private": true,
+  "scripts": {
+    "dev": "alita dev",
+    "build": "ANALYZE=1 alita build",
+    "plugin": "alita plugin list",
+    "test:e2e": "start-test dev :8989/__umi/api/status test:pw",
+    "test:pw": "playwright test",
+    "start": "npm run dev"
+  },
+  "dependencies": {
+    "@alita/flow": "workspace:*",
+    "@ant-design/icons": "^4.7.0",
+    "alita": "workspace:*",
+    "antd": "^4.24.8"
+  }
+}

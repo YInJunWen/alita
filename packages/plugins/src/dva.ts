@@ -1,8 +1,9 @@
 // 从 @umijs/plugin 复制，因为需要默认开启，修改了 enableBy
 // 增加 types
+import type { AlitaApi } from '@alita/types';
 import * as t from '@umijs/bundler-utils/compiled/babel/types';
-import { chalk, logger, winPath } from '@umijs/utils';
-import { AlitaApi } from 'alita';
+import { chalk, winPath } from '@umijs/utils';
+
 import { dirname, extname, join, relative } from 'path';
 import { Model, ModelUtils } from './utils/modelUtils';
 import { withTmpPath } from './utils/withTmpPath';
@@ -11,25 +12,29 @@ export default (api: AlitaApi) => {
   const pkgPath = join(
     dirname(require.resolve('@umijs/plugins/package.json')),
     'libs',
-    'dva.ts',
+    'dva.tsx',
   );
   // const enableBy = (opts: any) => {
   //   return !!opts.config.dva;
   // };
-  api.onStart(() => {
-    logger.info('Using Dva Plugin');
-  });
+
   api.describe({
     config: {
       schema(Joi) {
         return Joi.object({
           extraModels: Joi.array().items(Joi.string()),
-          enableModelsReExport: Joi.boolean(),
+          enableModelsReExport: Joi.object(),
+          immer: Joi.object(),
         });
       },
     },
     // enableBy,
   });
+  api.addRuntimePluginKey(() => ['dva']);
+
+  // only dev or build running
+  if (!['dev', 'build', 'dev-config', 'preview', 'setup'].includes(api.name))
+    return;
 
   api.modifyAppData((memo) => {
     const models = getAllModels(api);
@@ -63,6 +68,12 @@ export default (api: AlitaApi) => {
       tpl: `
 export interface ConnectProps {
       dispatch?: Dispatch;
+      // 兼容 alita2
+      match?: any;
+      location?: any;
+      history?: History;
+      route?: any;
+      routes?: any;
 }
 type RequiredConnectProps = Required<ConnectProps>
 export type ConnectRC<
@@ -121,7 +132,7 @@ ${
           const { file, namespace } = model;
           // prettier-ignore
           // export type { IndexModelState } from '/Users/xiaohuoni/next-alita-app/src/models/index';
-          return `export type { ${namespace.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())}ModelState } from '${winPath(file.replace(extname(file), ''))}';`;
+          return `export type { ${namespace.replace(/( |^)[a-z]/g, (L) => L.toUpperCase())}ModelState } from '${winPath(file.replace(extname(file), ''))}';`;
         })
         .join('\r\n')
     : ''
@@ -137,17 +148,35 @@ ${
 // It's faked dva
 // aliased to @umijs/plugins/templates/dva
 import { create, Provider } from 'dva';
+import createLoading from '${winPath(require.resolve('dva-loading'))}';
+${
+  api.config.dva?.immer
+    ? `
+import dvaImmer, { enableES5, enableAllPlugins } from '${winPath(
+        require.resolve('dva-immer'),
+      )}';
+`
+    : ''
+}
 import React, { useRef } from 'react';
-import { useAppData } from 'umi';
+import { history, ApplyPluginsType, useAppData } from 'umi';
 import { models } from './models';
 
+let dvaApp: any;
+
 export function RootContainer(props: any) {
-  const { navigator } = useAppData();
+  const { pluginManager } = useAppData();
   const app = useRef<any>();
+  const runtimeDva = pluginManager.applyPlugins({
+    key: 'dva',
+    type: ApplyPluginsType.modify,
+    initialValue: {},
+  });
   if (!app.current) {
     app.current = create(
       {
-        history: navigator,
+        history,
+        ...(runtimeDva.config || {}),
       },
       {
         initialReducer: {},
@@ -155,16 +184,31 @@ export function RootContainer(props: any) {
           return [...middlewares];
         },
         setupApp(app: IDvaApp) {
-          app._history = navigator;
+          app._history = history;
         },
       },
     );
+    dvaApp = app.current;
+    app.current.use(createLoading());
+    ${api.config.dva?.immer ? `app.current.use(dvaImmer());` : ''}
+    ${api.config.dva?.immer?.enableES5 ? `enableES5();` : ''}
+    ${api.config.dva?.immer?.enableAllPlugins ? `enableAllPlugins();` : ''}
+    (runtimeDva.plugins || []).forEach((p) => {
+      app.current.use(p);
+    });
     for (const id of Object.keys(models)) {
-      app.current.model(models[id].model);
+      app.current.model({
+        namespace: models[id].namespace,
+        ...models[id].model,
+      });
     }
     app.current.start();
   }
   return <Provider store={app.current!._store}>{props.children}</Provider>;
+}
+
+export function getDvaApp() {
+  return dvaApp;
 }
       `,
       context: {},
@@ -188,6 +232,7 @@ export function dataflowProvider(container, opts) {
       path: 'index.ts',
       content: `
 export { connect, useDispatch, useStore, useSelector } from 'dva';
+export { getDvaApp } from './dva';
 `,
     });
   });
@@ -242,7 +287,7 @@ export function getAllModels(api: AlitaApi) {
 function isModelObject(node: t.Node) {
   return (
     t.isObjectExpression(node) &&
-    node.properties.some((property: any) => {
+    node.properties.some((property) => {
       return [
         'state',
         'reducers',

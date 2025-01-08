@@ -1,4 +1,4 @@
-import { NavBarListItem } from '{{{ alitalayout }}}';
+import type { NavBarListItem } from './AlitaLayout';
 
 let pageNavBar = {};
 let tabBarList = {};

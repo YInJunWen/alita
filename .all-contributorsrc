@@ -36,6 +36,7 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/48704410?v=4",
       "profile": "https://github.com/hang1017",
       "contributions": [
+        "code",
         "plugin"
       ]
     },
@@ -64,6 +65,96 @@
       "profile": "https://sorrycc.com/",
       "contributions": [
         "design"
+      ]
+    },
+    {
+      "login": "fz6m",
+      "name": "Yingci",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59400654?v=4",
+      "profile": "http://fz6m.com",
+      "contributions": [
+        "infra"
+      ]
+    },
+    {
+      "login": "xierenyuan",
+      "name": "阿平",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7599351?v=4",
+      "profile": "https://github.com/xierenyuan",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "chj-damon",
+      "name": "damon.chen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4902684?v=4",
+      "profile": "https://github.com/chj-damon",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "sushi-su",
+      "name": "修行",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50985188?v=4",
+      "profile": "https://github.com/sushi-su",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "532pyh",
+      "name": "红尘炼心",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26398280?v=4",
+      "profile": "https://github.com/532pyh",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "tangbzai",
+      "name": "tangbzai",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47456577?v=4",
+      "profile": "https://github.com/tangbzai",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Hexi1997",
+      "name": "Hexi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66669483?v=4",
+      "profile": "https://github.com/Hexi1997",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "damonwonghv",
+      "name": "Damon Wong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11707312?v=4",
+      "profile": "https://github.com/damonwonghv",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Alioth1017",
+      "name": "Alioth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10696356?v=4",
+      "profile": "https://github.com/Alioth1017",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Penguin-Lin",
+      "name": "Penguin-Lin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33897969?v=4",
+      "profile": "https://github.com/Penguin-Lin",
+      "contributions": [
+        "code"
       ]
     }
   ],

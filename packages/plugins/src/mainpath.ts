@@ -1,11 +1,8 @@
-import { logger } from '@umijs/utils';
-import { AlitaApi } from 'alita';
+import type { AlitaApi } from '@alita/types';
+
 // import resetMainPath from './utils/resetMainPath/resetMainPath';
 
 export default (api: AlitaApi) => {
-  api.onStart(() => {
-    logger.info('Using Main Path Plugin');
-  });
   api.describe({
     key: 'mainPath',
     config: {
@@ -15,6 +12,9 @@ export default (api: AlitaApi) => {
     },
     enableBy: api.EnableBy.config,
   });
+  // only dev or build running
+  if (!['dev', 'build', 'dev-config', 'preview', 'setup'].includes(api.name))
+    return;
 
   if (api.userConfig.mainPath) {
     const mainPath = api.userConfig.mainPath.startsWith('/')
@@ -30,10 +30,13 @@ export default (api: AlitaApi) => {
               main.path === '/' &&
               (main.id === 'index' || main.id === 'index/index')
             ) {
+              // 将首页的文件和目标文件交换
               let file = memo[key].file;
               memo[key].file = memo[id].file;
               memo[id].file = file;
               memo[id].isMainPath = true;
+              // 将原有的目标路由改成 /index
+              memo[id].path = '/index';
             }
           });
         }

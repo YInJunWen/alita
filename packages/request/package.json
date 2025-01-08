@@ -1,6 +1,6 @@
 {
   "name": "@alita/request",
-  "version": "3.0.0-beta.4",
+  "version": "3.1.2",
   "description": "@alita/request",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,8 +9,9 @@
   ],
   "scripts": {
     "build": "pnpm tsc",
-    "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
-    "dev": "pnpm build -- --watch"
+    "build:deps": "umi-scripts bundleDeps",
+    "dev": "pnpm build --watch",
+    "test": "umi-scripts jest-turbo"
   },
   "repository": {
     "type": "git",

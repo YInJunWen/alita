@@ -1,6 +1,6 @@
 {
-  "name": "@alita/create-alita",
-  "version": "3.0.0-beta.4",
+  "name": "create-alita",
+  "version": "3.3.3",
   "description": "create-alita",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,8 +10,9 @@
   ],
   "scripts": {
     "build": "pnpm tsc",
-    "build:deps": "pnpm esno ../../scripts/bundleDeps.ts",
-    "dev": "pnpm build -- --watch"
+    "build:deps": "umi-scripts bundleDeps",
+    "dev": "pnpm build --watch",
+    "test": "umi-scripts jest-turbo"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,6 @@
     "create-alita": "bin/create-alita.js"
   },
   "dependencies": {
-    "@umijs/utils": "4.0.0-beta.16"
+    "@umijs/utils": "4.3.30"
   }
 }

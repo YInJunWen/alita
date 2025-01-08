@@ -4,6 +4,14 @@ import ListGary from '@/assets/demoIcon/list.png';
 import ListBlue from '@/assets/demoIcon/list1.png';
 import SetGary from '@/assets/demoIcon/setting.png';
 import SetBlue from '@/assets/demoIcon/setting1.png';
+import type {
+  NavBarListItem,
+  NavBarProps,
+  TabBarListItem,
+  TabBarProps,
+  TitleListItem,
+} from 'alita';
+import { history } from 'alita';
 
 export const request = {
   prefix: '/api',
@@ -15,7 +23,7 @@ export const request = {
   },
 };
 
-const titleList = [
+const titleList: TitleListItem[] = [
   {
     pagePath: '/',
     title: '首页',
@@ -29,15 +37,28 @@ const titleList = [
     title: '设置',
   },
 ];
-const navList = [];
-const navBar = {
+const navList: NavBarListItem[] = [
+  {
+    pagePath: '/',
+    navBar: {
+      pageBackground: '#fff',
+    },
+  },
+  {
+    pagePath: '/users',
+    navBar: {
+      pageBackground: '#000',
+    },
+  },
+];
+const navBar: NavBarProps = {
   navList,
   fixed: false,
   onLeftClick: () => {
     // router.goBack();
   },
 };
-const tabList = [
+const tabList: TabBarListItem[] = [
   {
     pagePath: '/',
     text: '首页',
@@ -57,7 +78,7 @@ const tabList = [
     badge: '',
   },
   {
-    pagePath: '/users/foo',
+    pagePath: '/foo/1232',
     text: '设置',
     iconPath: SetGary,
     selectedIconPath: SetBlue,
@@ -67,7 +88,7 @@ const tabList = [
   },
 ];
 
-const tabBar = {
+const tabBar: TabBarProps = {
   color: `#999999`,
   selectedColor: '#00A0FF',
   borderStyle: 'white',
@@ -80,4 +101,17 @@ export const mobileLayout = {
   navBar,
   tabBar,
   titleList,
+  // customHeader:<div>asdasdassaasd</div>
 };
+
+export async function getKeepAlive(keepaliva: any[]) {
+  console.log('getKeepAlive');
+  console.log(keepaliva);
+  return [/./];
+}
+
+export function render(oldRender: any) {
+  console.log('history');
+  console.log(history);
+  oldRender();
+}

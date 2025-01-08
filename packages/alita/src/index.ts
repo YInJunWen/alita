@@ -1,3 +1,4 @@
 // @ts-ignore
+export * from '@alita/types';
 export * from 'umi';
-export type { AlitaApi } from './types';
+export { run } from './cli';
